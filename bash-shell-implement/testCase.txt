@@ -1,0 +1,400 @@
+Test Case for Command Shell
+
+
+
+Test prompt:
+
+
+1. Run ./myShell
+You can see the prompt shows current directory before the $.
+This is correct because getcwd( ) shows current directory and the format is as README states.
+
+
+Test exit:
+
+
+1. Run ./myShell, then enter “exit”
+You can see the program stop and exit.
+This is correct because when user enter “exit” as user input, the program will stop and exit as README requires.
+
+2. Run ./myShell, then enter Ctrl + D (press the control key and D key)
+You can see the program exit.
+This is correct because the program will exit when EOF is encountered reading from stdin.
+
+3. Run ./myShell, then enter “sh”, then enter “exit”
+You can see $ sign， after enter “exit” you can see “Program exited with status 0”.
+It is correct because command “sh” open another program and exit the latest program but still in myShell program. If you want to exit myShell program, then you should enter “exit” one more time.
+
+4. Run ./myShell, then enter “./myShell”, then enter “exit”
+You can see the current directory and prompt, enter “exit” then you can see “Program exited with status 0”.
+It is correct because you can run myShell program in my shell, when enter “exit” one time it exit the shell program which is opened in my shell. If you want to exit my shell in this case, you need to enter “exit” twice.
+
+
+
+Test exit status:
+
+
+1. Run ./myShell, then enter “cat 123”
+You can see “ /bin/cat: 123: No such file or directory.   Program exited with status 1”.
+It is correct because 123 file does not exit so command cat can not execute successfully.
+
+2. Run ./myShell, then enter “ls 123”
+You can see “/bin/ls: cannot access '123': No such file or directory.  Program exited with status 2”.
+It is correct because 123 file or directory does not exit, so command ls can not execute successfully.
+
+3. Run ./myShell, then enter “ls a\ bc”
+You can see "/bin/ls: cannot access 'a bc': No such file or directory Program exited with status 2”.
+It is correct because a\ bc argument is parsed as a bc, and the file or directory does not exit so command ls can not execute successfully.
+
+
+
+
+Test some normal commands:
+
+
+1. Run ./myShell, then enter “ls”
+You can see all files in current directory and “Program exited with status 0” and the shell print current directory with prompt and repeat the process again.
+This is correct because command “ls” shows all files in current directory and after the specified program exits successfully, the shell should print”Program exited with status 0” and as README requires.
+
+2. Run ./myShell, then enter “pwd”
+You can see the current directory and “Program exited with status 0”.
+It is correct because command “pwd” shows the current directory.
+
+3. Run ./myShell, then enter “emacs”
+You can see the shell open the emacs.
+It is correct because command “emacs” open the emacs.
+
+Test invalid command:
+
+
+4. Run ./myShell, then enter “     ”(input are all white spaces, no mater how many of white spaces)
+You can see “invalid command shell input”.
+This is correct because my program does not allow white spaces as user command.
+
+5. Run ./myShell, then enter “..”
+You can see “invalid command shell input”.
+It is correct because  command “..” is special command which search last level file, my shell program forbid this input.
+
+6. Run ./myShell, then enter “.”
+You can see “invalid command shell input”.
+It is correct because command “.” Is special command which search current file, my shell program forbid this user input.
+
+7. Run ./myShell, then enter “/bin/aaa”
+You can see “invalid command shell input”.
+It is correct because my shell program forbids the user input commands which start with ‘/’
+
+Test command not found
+
+8. Run ./myShell, then enter “…”
+You can see “Command ... not found”.
+It is correct because command “…” does not exit so it can not be executed, my shell gives remind.
+
+
+9. Run ./myShell, then enter “abc”
+You can see “Command abc not found”.
+It is correct because command “abc” does not exit so my shell gives remind.
+
+Test the command starts with white space:
+
+1. Run ./myShell, then enter “     ls”
+You can see all the files in current directory.
+It is correct because my shell will automatically delete the white space before the command and cover this input to “ls”, command “ls” shows all files in current directory.
+
+Test parse arguments:
+
+I write a testParse.cpp to print out command and the result of arguments parse in order to test the parse function.
+
+1. Run ./myShell, then enter “./testParse a b\ c”
+You can see the output is:
+it has 3 elements.
+argv[0] is ./testPars
+argv[1] is a
+argv[2] is b c
+It is correct because it parses as README requires.
+
+2. Run ./myShell, then enter “./testParse a\ b c\ d”
+You can see the output is:
+it has 3 elements.
+argv[0] is ./testParse
+argv[1] is a b
+argv[2] is c d
+It is correct because it parses as README requires.
+
+
+3. Run ./myShell, then enter “./testParse         a               b     23”
+You can see the output is:
+it has 4 elements.
+argv[0] is ./testParse
+argv[1] is a
+argv[2] is b
+argv[3] is 23
+It is correct because it parses as README requires.
+
+
+4. Run ./myShell, then enter “./testParse a b 23”
+You can see the output is:
+it has 4 elements.
+argv[0] is ./testParse
+argv[1] is a
+argv[2] is b
+argv[3] is 23
+It is correct because it parses as README requires.
+
+5. Run ./myShell, then enter “./testParse  a\ b c\ \ d”
+You can see the output is:
+it has 3 elements.
+argv[0] is ./testParse
+argv[1] is a b
+argv[2] is c  d
+It is correct because it parses as README requires.
+
+6. Run ./myShell, then enter “./testParse a\  b c \ d”
+You can see the output is:
+it has 5 elements.
+argv[0] is ./testParse
+argv[1] is a
+argv[2] is b
+argv[3] is c
+argv[4] is  d
+It is correct because it parses as README requires.
+
+7. Run ./myShell, then enter “./testParse a\  b c \ d\”
+You can see the output is:
+it has 5 elements.
+argv[0] is ./testParse
+argv[1] is a
+argv[2] is b
+argv[3] is c
+argv[4] is  d\
+It is correct because it parses as README requires and when the last character of user input is “\” my shell program does not treat it as warp, but treats it as a back slash character.
+
+8. Run ./myShell, then enter “./testParse a\\\\\”
+You can see the output is:
+it has 2 elements.
+argv[0] is ./testParse
+argv[1] is a\\\
+It is correct because it parses as README requires and my shell program will treat \ as separator, the back slash separator will be replaced with null after parse, and the one character after the back slash separator will be treated as normal character no matter what it is. So \\ will be treated as one back slash separator and a normal back slash character.
+
+9. Run ./myShell, then enter “./testParse \\\”
+Yes can see the output is:
+it has 2 elements.
+argv[0] is ./testParse
+argv[1] is \\
+It is correct because it parses as README requires.
+
+10. Run ./myShell, then enter “./testParse \*\\\\”
+You can see the output is:
+it has 2 elements.
+argv[0] is ./testParse
+argv[1] is *\\
+It is correct because it parses as README requires.
+
+
+11. Run ./myShell, then enter “./testParse          ”
+You can see the output is:
+it has 1 elements.
+argv[0] is ./testParse
+It is correct because it parses as README requires.
+
+12. Run ./myShell, then enter “./testParse          ”
+You can see the output is:
+it has 1 elements.
+argv[0] is ./testParse
+It is correct because it parses as README requires.
+
+13.Run ./myShell, then enter “./testParse \   \ \  ”
+You can see the output is:
+it has 3 elements.
+argv[0] is ./testParse
+argv[1] is
+argv[2] is
+It is correct because it parses as README requires.
+
+
+Test cd command:
+
+1. Run ./myShell, then enter “cd ..”
+You can see the directory is “myShell:/home/yy226/ece551 $” rather than “myShell:/home/yy226/ece551/mp_miniproject $”.
+It is correct because command cd .. return to parent level of directory.
+
+2. Run ./myShell, then enter “cd mp_miniproject”
+You can see “myShell:/home/yy226/ece551/mp_miniproject $”.
+It is correct because it change to /home/yy226/ece551/mp_miniproject directory.
+
+
+3. Run ./myShell, then enter “cd 123”
+You can see “cd error: directory does not exit  : No such file or directory” .
+It is correct because directory 123 does not exit.
+
+
+4. Run ./myShell, then enter “cdmp_miniproject”.
+You can see “Command cdmp_miniproject not found”.
+It is correct because it will treat cdmp_miniproject as one whole command not the argument. And this command can not execute.
+
+
+5. Run ./myShell, then enter “cd /home/yy226/ece551/mp_miniproject”
+You can see “myShell:/home/yy226/ece551/mp_miniproject $”.
+It is correct because it change to directory /home/yy226/ece551/mp_miniproject.
+
+6. Run ./myShell, then enter “cd /”
+You can see “myShell:/ $”
+It is correct because command cd / return the root directory.
+
+7. Run ./myShell, then enter “cd new”, then enter “../testParse a b”
+You can see
+it has 3 elements.
+argv[0] is ../testParse
+argv[1] is a
+argv[2] is b
+Program exited with status 0
+It is correct because it can run program in parent directory.
+
+Test set, export, inc and access to variables:
+
+In my shell’s design, I replace all variables with their own value(if exit) before any operation, that means first I replace the user input with the value of variable if there are variable (contains $ ) in user input. For example, if var=123, then when user input “set $var 123” I replace it with “set 123 123”. After replace for the user command, then in my shell design a variable name must be a combination of letters (case sensitive), underscores, and numbers. For example, “$var” is a invalid variable name.
+I use greedy algorithm to do the variable access, for example, if var1=123, var11=abc, then $var11 has the output abc.
+I have the $ operation, for example, if var1=abc, var2=123, then when you enter “$var1+$var2” it will show “abc123”.
+In inc command, I also check the validation of variable name.
+
+
+1. Run ./myShell, then enter “set var 123”
+You can see “set variable var to value 123”
+It is correct as README requires.
+
+2. Run ./myShell, then enter “set ab_=s 123”
+You can see “invalid variable name     invalid variable name ab_=s”
+It is correct because variable name mush  be a combination of letters (case sensitive), underscores, and numbers.
+
+3. Run ./myShell, then enter “set a\  b c”
+You can see “invalid variable name     invalid variable name a\”
+It is correct because the variable name is treated as “a\” which is invalid. It will not parse the variable name(will not parse it to a b)
+
+4. Run ./myShell, then enter “set”
+You can see “please follow the format set varName value”.
+It is correct because my shell requires at least one argument after set command.
+
+5. Run ./myShell, then enter “set var ”
+You can see “set variable var to value var”
+It is correct because my shell will treat both variable name and value as “var”. In this case variable name is var and value is var.
+
+6. Run ./myShell, then enter “set var 123”, then enter “set var 456”
+You can see “set variable var to value 456”.
+It is correct because it update the value of var to 456.
+
+7. Run ./myShell, then enter “set var a\  b”
+You can see “set variable var to value a\  b ”.
+It is correct because my shell will not parse the value of variable as “a b”
+
+8. Run ./myShell, then enter “set var value1 value2”
+You can see “set variable var to value value1 value2”.
+It is correct because all character after the second white space will be treated as value of variable.
+
+9. Run ./myShell, then enter “set var abc”, then enter “env”
+The variable of var does not show up in env.
+It is correct as README requires.
+
+10. Run ./myShell, then enter “set var abc”, then enter “export var”
+You can see “it value is abc”.
+It is correct because export command put the current value of var into the environment for other programs, and my shell print out the current value.
+
+11. Run ./myShell, then enter “set var abc”, then enter “export var”, then enter “env”
+You can see the new value of var shows up in env.
+It is correct as README requires.
+
+12. Run ./myShell, then enter “export”
+You can see “variable does not exit”
+It is correct because it treat variable name as empty, the variable does not exist in varMap.
+
+13. Run ./myShell, then enter “export abc”
+You can see “variable abc does not exit”
+It is correct because variable abc does not exit in varMap.
+
+14. Run ./myShell, then enter “export var 123”
+You can see “variable var 123 does not exit”
+It is correct because it treat the variable name as “var 123”, and that variable does not exit.
+
+15. Run ./myShell, then enter “exportvar”
+You can see “Command exportvar not found”
+It is correct because my shell will not get export command from input exportvar.
+
+16. Run ./myShell, then enter “set var 123”, then enter “inc var”
+You can see “value is digit   inc the var var to value 124”
+It is correct as README requires.
+
+17. Run ./myShell, then enter “set var abc”, then enter “inc var”
+You can see “the value is not digit , value be set as 0  inc the var var to value 1”
+It is correct as README requires.
+
+18. Run ./myShell, then enter “set var 123”, then enter “inc var1”
+You can see “variable var1 does not exist  insert new variable to varMap key is var1 value is 1”
+It is correct as README requires.
+
+19. Run ./myShell, then enter “set var 123”, then enter “incvar”
+You can see “Command incvar not found”
+It is correct because my shell will not search command inc from input incvar.
+
+
+20. Run ./myShell, then enter “inc var2”
+You can see “variable var2 does not exist   insert new variable to varMap key is var2 value is 1”
+It is correct as README requires.
+
+21. Run ./myShell, then enter “set var 123”, then enter “inc var1”, then enter “inc var1”
+You can see “value is digit  inc the var var1 to value 2”
+It is correct because when var1 does not exit my shell insert it into varMp and set the value to 1. The second inc command inc an existing variable.
+
+22. Run ./myShell, then enter “inc”
+You can see “variable  does not exist  insert new variable to varMap key is  value is 1”
+It is correct because it treat the variable as empty.
+
+23. Run ./myShell, then enter “inc var1 var2”
+You can see “invalid variable name”
+It is correct because it treat the variable name as “var1 var2”, and in my shell it check the validation of variable name.
+
+24. Run ./myShell, then enter “inc $$$***”
+You can see “invalid variable name”
+It is correct because in my shell command inc will check the validation of variable name.
+
+25. Run ./myShell, then enter “set var 123”, then enter “export $var”
+You can see “export 123  variable 123 does not exit”
+It is correct because it replace $var with its value 123 so then the variable name is 123.
+
+26. Run ./myShell, then enter “set var 123”, then enter “set var1 var”, then enter “export $var1”
+You can see “export var   it value is 123”
+It is correct because $var1 is replaced with its value var.
+
+27. Run ./myShell, then enter “set var 123”, then enter “set var1 var”, then enter “inc $var1”
+You can see “inc var  value is digit   inc the var var to value 124”
+It is correct because $var1 is replaced with its value var.
+
+28. Run ./myShell, then enter “set var 123”, then enter “set var1 $var”, then enter “set var2 $var1abc”
+You can see “set var2 123abc   set variable var2 to value 123abc”
+It is correct because $var1 is replaced with its value $var, then $var is replaced with its value 123.
+
+29. Run ./myShell, then enter “set var1 123”, then enter “set var11 abc”, then enter “$var1111”
+You can see “abc11”
+It is correct because my greedy algorithm will treat the variable name as var11.
+
+30. Run ./myShell, then enter “$abc”
+You can see “variable abc does not exit”
+It is correct because variable abc does not exit.
+
+31. Run ./myShell, then enter “set var1 123”, then enter “set var2 456”, then enter “$var1+$var2”
+You can see “123+456”.
+It is correct as README requires.
+
+32. Run ./myShell, then enter “set var1 123”, then enter “set var2 456”, then enter “$var1$var2”
+You can see “123456”
+It is correct as README requires.
+
+33. Run ./myShell, then enter “set var1 123”, then enter “set var2 456”, then enter “$$$var1$var2”
+You can see “123456”
+It is correct because variable is split by “$”, so &&& will be treated as one single $.
+
+
+34. Run ./myShell, then enter “set var 4294967295”, then enter “inc var”
+You can see “value is digit inc the var var to value 0”
+It is correct because when convert string 4294967295 to digital, it overflows.
+
+35. Run ./myShell, then enter “set var -4294967295”, then enter “inc var”
+You can see “set variable var to value -4294967295”
+It is correct because my shell treat -4294967295 as string since my shell does not inc negative number. 
